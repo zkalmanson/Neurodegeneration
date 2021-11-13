@@ -1,5 +1,4 @@
-function [blebMask] = blebDetection(cropped_dendrite)
-    % THIS IS THE CLEANED UP BLEB DETECTION FUNCTION. IGNORE LAST SECTION AS IT IS WORK IN PROGRESS 
+function [numOfFeatures,blebMask,features,final_x,final_y] = blebDetection(cropped_dendrite)
     % 1. Get SURF and KAZE points from cropped image 
     % 2. Intensity based gaussian filtering 
     % 3. Further filtering for points only in MSER regions of interest  
@@ -37,7 +36,7 @@ function [blebMask] = blebDetection(cropped_dendrite)
     %% FILTERING THE POINTS 
     
     highcoords = zeros(100000,2);       
-    highThresh = 0.5 * mean(dendFilter); %High pass filter to get rid of points we don't care about 
+    highThresh = 0.75 * mean(dendFilter); %High pass filter to get rid of points we don't care about 
      
     for i = 1:length(totalXLoc) % Store high pass points 
         if dendFilter(totalYLoc(i),totalXLoc(i)) > highThresh  % Store high pass points  
@@ -122,8 +121,8 @@ function [blebMask] = blebDetection(cropped_dendrite)
     filteredIndices = zeros(1000,1);
     for i=1:max(labeled,[],'all') % For each watershed region with multiple points, deletes all but first one. There is probably a better way to do this... 
         if length(find(filteredPoints(:,4) == i)) > 0
-            tempPoints = find(filteredPoints(:,4) == i); 
-            filteredIndices(i,1) = tempPoints(1,1); 
+            tempPoints = find(filteredPoints(:,4) == i); %Temporary list to store indices of points in this region 
+            filteredIndices(i,1) = tempPoints(1,1); %Take the first point and store index into new list 
         else
             filteredIndices(i,1) = 0; 
         end 
@@ -135,7 +134,7 @@ function [blebMask] = blebDetection(cropped_dendrite)
     final_x = filteredPoints(row,1); % Final coords 
     final_y = filteredPoints(row,2); 
     
-    %{
+    
     figure();
     imshow(img);
     hold on; 
@@ -148,7 +147,7 @@ function [blebMask] = blebDetection(cropped_dendrite)
     alpha.AlphaData = 0.3;
     hold on; 
     plot(final_x, final_y,'x', 'LineWidth', .5, 'MarkerSize', 5, 'MarkerEdgeColor','b');
-    %}
+    
     
     
     
@@ -160,7 +159,7 @@ function [blebMask] = blebDetection(cropped_dendrite)
     figure();   
     imshow(img);
     hold on; 
-    plot(x_locFinal+5, y_locFinal,'_', 'LineWidth', .5, 'MarkerSize', 3, 'MarkerEdgeColor','g');
+    plot(final_x+5, final_y,'_', 'LineWidth', .5, 'MarkerSize', 3, 'MarkerEdgeColor','g');
     %} 
     
     
@@ -178,7 +177,7 @@ function [blebMask] = blebDetection(cropped_dendrite)
         pixels(i) = img(final_y(i),final_x(i)); 
     end 
     
-    numOfFeatures = 14; 
+    numOfFeatures = 13; 
     features = zeros(length(pixels),numOfFeatures,'double'); 
     
     features(:,1) = pixels; 
@@ -239,29 +238,26 @@ function [blebMask] = blebDetection(cropped_dendrite)
         features(i,11) = f10(final_y(i),final_x(i)); 
     end 
     
-    f11 = imgaborfilt(img,4,0); 
+    f11 = imgaborfilt(img,2,180); 
     for i=1:length(final_x)
         features(i,12) = f11(final_y(i),final_x(i)); 
     end 
     
-    f12 = imgaborfilt(img,4,90); 
+    f12 = imgaborfilt(img,2,120); 
     for i=1:length(final_x)
         features(i,13) = f12(final_y(i),final_x(i)); 
     end 
     
-    f13 = imgaborfilt(img,4,45); 
-    for i=1:length(final_x)
-        features(i,14) = f13(final_y(i),final_x(i)); 
-    end 
-    
-    idx = kmeans(features,2);
+    %{
+    idx = kmeans(features,3);
     
     figure;
     imshow(img); 
     hold on; 
-    plot(final_x(idx==1),final_y(idx==1),'r.','MarkerSize',8); 
-    plot(final_x(idx==2),final_y(idx==2),'b.','MarkerSize',8); 
-    %plot(final_x(idx==3),final_y(idx==3),'y.','MarkerSize',8); 
+    plot(final_x(idx==1),final_y(idx==1),'r.','MarkerSize',15); 
+    plot(final_x(idx==2),final_y(idx==2),'b.','MarkerSize',15); 
+    plot(final_x(idx==3),final_y(idx==3),'c.','MarkerSize',15); 
+    %} 
     
 end
 
