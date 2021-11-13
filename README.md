@@ -1,6 +1,6 @@
 # Neurodegeneration
 Neurodegeneration Project.\
-"NeurodegenMaster" will be the master script that all other functions will be inserted into. There will be a function for smart cropping, dendrite tracking, bleb detection, and categorization\ 
+"NeurodegenMaster" will be the master script that all other functions will be inserted into. There will be a function for smart cropping, dendrite tracking, bleb detection, and categorization
 
 
 
