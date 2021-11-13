@@ -1,4 +1,5 @@
 function [blebMask] = blebDetection(cropped_dendrite)
+    % THIS IS THE CLEANED UP BLEB DETECTION FUNCTION. IGNORE LAST SECTION AS IT IS WORK IN PROGRESS 
     % 1. Get SURF and KAZE points from cropped image 
     % 2. Intensity based gaussian filtering 
     % 3. Further filtering for points only in MSER regions of interest  
