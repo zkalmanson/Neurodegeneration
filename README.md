@@ -1,5 +1,5 @@
 # Neurodegeneration
-Neurodegeneration Project.\
+****Neurodegeneration Project.\****
 "blebDetection" is the most current version of detecting feature points\
 "dendriteCropping" crops down images, still in progress of being cleaned up\
 "createTrainingSet" and "TestingSet" are experiments with k means clustering to categorize points. These are still work in progress\
